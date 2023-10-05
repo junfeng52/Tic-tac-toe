@@ -1,4 +1,4 @@
 # Titatou
 ### Tu 3 en raya de confianza
-##Requeriments
-***pip install pygame
+## Requeriments
+*** pip install pygame
