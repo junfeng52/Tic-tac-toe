@@ -20,17 +20,23 @@ game = [[0, 0, 0],
         [0, 0, 0],
         [0, 0, 0]]
 
-cords = [[(160, 0), (160, 480)],[(160*2, 0), (160*2, 480)],[(0, 160), (480, 160)],[(0, 160*2),(480, 160*2)]]
+cords = [[(0, 0), (0, 480)],
+        [(0, 480), (480, 480)],
+        [(480, 480), (480, 0)],
+        [(480,0), (0, 0)],
+        #in line
+        [(160, 0), (160, 480)],
+        [(160*2, 0), (160*2, 480)],
+        [(0, 160), (480, 160)],
+        [(0, 160*2),(480, 160*2)]]
+
 squarecords = [ [2,2],[162,2],[322,2],
                 [2,162],[162,162],[322,162],
                 [2,322],[162,322],[322,322]]
 
 zones = []
 def changesprite(zone):
-    global xturn
-    global squarecords
-    global game
-    global screen
+    global xturn, squarecords, game, screen
 
     pos = squarecords.index([zone.x, zone.y])
 
@@ -46,10 +52,7 @@ def changesprite(zone):
 
 
 def checkwin(game):
-    global drawcomplete
-    global winX
-    global winO
-    global screen
+    global drawcomplete, winX, winO, screen
 
     diagonalwinX = [1, 1, 1] in [[game[0][0], game[1][1], game[2][2]], [game[0][2], game[1][1], game[2][0]]]
     diagonalwinO = [2, 2, 2] in [[game[0][0], game[1][1], game[2][2]], [game[0][2], game[1][1], game[2][0]]]
@@ -85,11 +88,12 @@ def checkwin(game):
             screen.blit(winO,[0,0])
             reset()
             break
+
     if "0" not in "".join([str(i) for k in game for i in k]):
         reset()
+
 def reset():
-    global game
-    global drawcomplete
+    global game, drawcomplete
 
     pygame.display.flip()
     pygame.time.delay(2500)
@@ -102,9 +106,11 @@ def reset():
 while running:
     pos = pygame.mouse.get_pos()
     keys = pygame.key.get_pressed()
+    
+    for cord in cords:
+        line = pygame.draw.line(screen, "black", cord[0], cord[1], 5)
+    
     if not drawcomplete:
-        for cord in cords:
-            line = pygame.draw.line(screen, "black", cord[0], cord[1], 4)
         for cord in squarecords:
             zones.append(screen.blit(zonesprite,[cord[0],cord[1]]))
         drawcomplete = True
@@ -121,6 +127,6 @@ while running:
                 if zone.collidepoint(pos) and pygame.mouse.get_pressed()[0]:
                     changesprite(zone)
 
-    pygame.display.flip()
     checkwin(game)
+    pygame.display.flip()
     clock.tick(60)
