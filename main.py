@@ -3,9 +3,8 @@ import pygame
 pygame.init()
 screen = pygame.display.set_mode((480, 480))
 clock = pygame.time.Clock()
-screen.fill("gray")
 running = True
-drawcomplete= False
+drawcomplete = False
 xturn = True
 pygame.display.set_caption("TITATOU")
 
@@ -58,33 +57,27 @@ def checkwin(game):
     diagonalwinO = [2, 2, 2] in [[game[0][0], game[1][1], game[2][2]], [game[0][2], game[1][1], game[2][0]]]
     
     if diagonalwinX:
-        print("ganan las x")
         screen.blit(winX,[0,0])
         reset()
     elif diagonalwinO:
-        print("ganan las O")
         screen.blit(winO,[0,0])
         reset()
 
     for x in range(3):
         if [game[0][x], game[1][x], game[2][x]] == [1, 1, 1]:
-            print("ganas las X")
             screen.blit(winX,[0,0])
             reset()
         if [game[0][x], game[1][x], game[2][x]] == [2, 2, 2]:
-            print("ganas las O")
             screen.blit(winO,[0,0])
             reset()
                 
     for y in game:
         if y == [1,1,1]:
-            print("win for X")
             screen.blit(winX,[0,0])
             reset()
             break
 
         if y == [2,2,2]:
-            print("win for O")
             screen.blit(winO,[0,0])
             reset()
             break
@@ -96,7 +89,7 @@ def reset():
     global game, drawcomplete
 
     pygame.display.flip()
-    pygame.time.delay(2500)
+    pygame.time.delay(2000)
 
     game = [[0, 0, 0],
             [0, 0, 0],
@@ -121,8 +114,6 @@ while running:
             pygame.quit()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if line.collidepoint(pos) and pygame.mouse.get_pressed()[0]:
-                print("pressionando")
             for zone in zones:
                 if zone.collidepoint(pos) and pygame.mouse.get_pressed()[0]:
                     changesprite(zone)
