@@ -40,12 +40,12 @@ def changesprite(zone):
     pos = squarecords.index([zone.x, zone.y])
 
     if xturn and game[pos//3][pos%3] == 0:
-        screen.blit(Xzonesprite,[zone.x, zone.y])
+        screen.blit(Xzonesprite, [zone.x, zone.y])
         game[pos//3][pos%3] = 1
         xturn = False
 
     elif not xturn and game[pos//3][pos%3] == 0:
-        screen.blit(Ozonesprite,[zone.x, zone.y])
+        screen.blit(Ozonesprite, [zone.x, zone.y])
         game[pos//3][pos%3] = 2
         xturn = True
 
@@ -53,40 +53,22 @@ def changesprite(zone):
 def checkwin(game):
     global drawcomplete, winX, winO, screen
 
-    diagonalwinX = [1, 1, 1] in [[game[0][0], game[1][1], game[2][2]], [game[0][2], game[1][1], game[2][0]]]
-    diagonalwinO = [2, 2, 2] in [[game[0][0], game[1][1], game[2][2]], [game[0][2], game[1][1], game[2][0]]]
-    
-    if diagonalwinX:
+    winstate = [[game[0][0], game[1][1], game[2][2]], [game[0][2], game[1][1], game[2][0]]]
+    winstate.extend([[game[0][x], game[1][x], game[2][x]] for x in range(3)])
+    winstate.extend([game[x][0], game[x][1], game[x][2]] for x in range(3))
+
+    if [1, 1, 1] in winstate:
         screen.blit(winX,[0,0])
         reset()
-    elif diagonalwinO:
+    elif [2, 2, 2] in winstate:
         screen.blit(winO,[0,0])
         reset()
-
-    for x in range(3):
-        if [game[0][x], game[1][x], game[2][x]] == [1, 1, 1]:
-            screen.blit(winX,[0,0])
-            reset()
-        if [game[0][x], game[1][x], game[2][x]] == [2, 2, 2]:
-            screen.blit(winO,[0,0])
-            reset()
-                
-    for y in game:
-        if y == [1,1,1]:
-            screen.blit(winX,[0,0])
-            reset()
-            break
-
-        if y == [2,2,2]:
-            screen.blit(winO,[0,0])
-            reset()
-            break
 
     if "0" not in "".join([str(i) for k in game for i in k]):
         reset()
 
 def reset():
-    global game, drawcomplete
+    global game, drawcomplete, xturn
 
     pygame.display.flip()
     pygame.time.delay(2000)
@@ -94,6 +76,7 @@ def reset():
     game = [[0, 0, 0],
             [0, 0, 0],
             [0, 0, 0]]
+    xturn = True
     drawcomplete = False
 
 while running:
