@@ -14,7 +14,7 @@ Ozonesprite = pygame.image.load("img/Ozone.png")
 winX = pygame.image.load("img/xwin.png")
 winO = pygame.image.load("img/Owin.png")
 
-#0 = vacio, 1 = X, 2 = O
+#0 = None, 1 = X, 2 = O
 game = [[0, 0, 0],
         [0, 0, 0],
         [0, 0, 0]]
@@ -29,33 +29,33 @@ cords = [[(0, 0), (0, 480)],
         [(0, 160), (480, 160)],
         [(0, 160*2),(480, 160*2)]]
 
-squarecords = [ [2,2],[162,2],[322,2],
-                [2,162],[162,162],[322,162],
-                [2,322],[162,322],[322,322]]
+squarecords = [[[160*y+2, 160*x+2] for y in range(3)] for x in range(3)]
 
 zones = []
 def changesprite(zone):
     global xturn, squarecords, game, screen
+    pos = []
 
-    pos = squarecords.index([zone.x, zone.y])
+    for x in range(3):
+        for y in range(3):
+            if [zone.x, zone.y] == squarecords[x][y]:
+                pos = [x, y]
 
-    if xturn and game[pos//3][pos%3] == 0:
+    if xturn and game[pos[0]][pos[1]] == 0:
         screen.blit(Xzonesprite, [zone.x, zone.y])
-        game[pos//3][pos%3] = 1
+        game[pos[0]][pos[1]] = 1
         xturn = False
-
-    elif not xturn and game[pos//3][pos%3] == 0:
+    elif not xturn and game[pos[0]][pos[1]] == 0:
         screen.blit(Ozonesprite, [zone.x, zone.y])
-        game[pos//3][pos%3] = 2
+        game[pos[0]][pos[1]] = 2
         xturn = True
 
-
 def checkwin(game):
-    global drawcomplete, winX, winO, screen
-
+    global drawcomplete, winX, winO
     winstate = [[game[0][0], game[1][1], game[2][2]], [game[0][2], game[1][1], game[2][0]]]
-    winstate.extend([[game[0][x], game[1][x], game[2][x]] for x in range(3)])
-    winstate.extend([game[x][0], game[x][1], game[x][2]] for x in range(3))
+    for x in range(3):
+        winstate.append([game[0][x], game[1][x], game[2][x]])
+        winstate.append([game[x][0], game[x][1], game[x][2]])
 
     if [1, 1, 1] in winstate:
         screen.blit(winX,[0,0])
@@ -69,10 +69,8 @@ def checkwin(game):
 
 def reset():
     global game, drawcomplete, xturn
-
     pygame.display.flip()
     pygame.time.delay(2000)
-
     game = [[0, 0, 0],
             [0, 0, 0],
             [0, 0, 0]]
@@ -85,10 +83,11 @@ while running:
     
     for cord in cords:
         line = pygame.draw.line(screen, "black", cord[0], cord[1], 5)
-    
+
     if not drawcomplete:
-        for cord in squarecords:
-            zones.append(screen.blit(zonesprite,[cord[0],cord[1]]))
+        for x in range(3):
+            for y in range(3):
+                zones.append(screen.blit(zonesprite, squarecords[x][y]))
         drawcomplete = True
 
     for event in pygame.event.get():
